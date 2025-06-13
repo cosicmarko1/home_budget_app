@@ -8,3 +8,5 @@ pyasn1==0.6.1
 python-jose==3.5.0S
 rsa==4.9.1
 six==1.17.0
+pytest==8.4.0
+black==25.1.0

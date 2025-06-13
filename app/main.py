@@ -9,6 +9,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(users.router)
 
+
 @app.get("/")
 def read_root():
     return {"message": "Home Budget API is now running"}
