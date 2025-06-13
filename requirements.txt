@@ -1,3 +1,10 @@
 fastapi[all]==0.115.12
 sqlalchemy==2.0.41
 mysql-connector-python==9.3.0
+bcrypt==4.3.0
+passlib==1.7.4
+ecdsa==0.19.1
+pyasn1==0.6.1
+python-jose==3.5.0S
+rsa==4.9.1
+six==1.17.0
