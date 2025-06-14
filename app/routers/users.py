@@ -25,7 +25,9 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username is already registered")
 
     hashed_password = auth.hash_password(user.password)
-    new_user = models.User(username=user.username, hashed_password=hashed_password)
+    new_user = models.User(
+        username=user.username, hashed_password=hashed_password, balance=1000.0
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -48,6 +50,6 @@ def login(
     return {"access_token": token, "token_type": "bearer"}
 
 
-@router.get("/me")
-def read_me(user=Depends(get_current_user)):
-    return {"username": user.username}
+@router.get("/me", response_model=schemas.UserResponse)
+def read_users_me(current_user: models.User = Depends(get_current_user)):
+    return current_user

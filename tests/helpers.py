@@ -10,12 +10,16 @@ def generate_random_username(prefix="user"):
 
 
 def register_user(username: str, password: str = "defaultpass"):
-    response = client.post(
-        "/register", json={"username": username, "password": password}
-    )
-    return response
+    return client.post("/register", json={"username": username, "password": password})
 
 
 def login_user(username: str, password: str = "default_pass"):
-    response = client.post("/login", data={"username": username, "password": password})
-    return response
+    return client.post("/login", data={"username": username, "password": password})
+
+
+def get_auth_header(username=None, password="defaultpass"):
+    username = username or generate_random_username()
+    register_user(username, password)
+    login_response = login_user(username, password)
+    token = login_response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
