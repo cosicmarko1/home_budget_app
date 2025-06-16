@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class UserCreate(BaseModel):
@@ -38,3 +39,20 @@ class Category(CategoryBase):
 
     class Config:
         model_config = {"from_attributes": True}
+
+
+class ExpenseBase(BaseModel):
+    amount: float
+    description: Optional[str] = None
+    category_id: int
+
+
+class ExpenseCreate(ExpenseBase):
+    pass
+
+
+class ExpenseResponse(ExpenseBase):
+    id: int
+
+    class Config:
+        from_attributes = True
