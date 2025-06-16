@@ -11,6 +11,7 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     balance = Column(Float, default=1000.0)
     categories = relationship("Category", back_populates="owner")
+    expenses = relationship("Expense", back_populates="user")
 
 
 class Category(Base):
@@ -20,3 +21,16 @@ class Category(Base):
     name = Column(String(100), nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="categories")
+    expenses = relationship("Expense", back_populates="category")
+
+
+class Expense(Base):
+    __tablename__ = "expenses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Float, nullable=False)
+    description = Column(String(255))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    user = relationship("User", back_populates="expenses")
+    category = relationship("Category", back_populates="expenses")
