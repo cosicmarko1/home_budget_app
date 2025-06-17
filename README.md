@@ -1,7 +1,7 @@
-Home Budget API
+## Home Budget API
 
 
-REST API for tracking personal expenses by category, payment method and time period.
+REST API for tracking personal expenses by category, payment method and time period
 
 
 ## Features:
@@ -22,7 +22,7 @@ REST API for tracking personal expenses by category, payment method and time per
 - testing: Pytest
 
 
-Setup instructions
+## Setup instructions
 
 
 1. Clone the repository
