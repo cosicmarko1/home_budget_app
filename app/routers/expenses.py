@@ -30,6 +30,7 @@ def create_expense(
         description=expense.description,
         user_id=current_user.id,
         category_id=expense.category_id,
+        payment_method=expense.payment_method,
     )
     db.add(new_expense)
     db.commit()
@@ -71,6 +72,7 @@ def filter_expenses(
     start_date: Optional[date] = Query(None),
     end_date: Optional[date] = Query(None),
     description: Optional[str] = Query(None),
+    payment_method: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -88,6 +90,8 @@ def filter_expenses(
         query = query.filter(models.Expense.date <= end_date)
     if description is not None:
         query = query.filter(models.Expense.description.ilike(f"%{description}%"))
+    if payment_method is not None:
+        query = query.filter(models.Expense.payment_method.ilike(f"%{payment_method}%"))
 
     return query.order_by(models.Expense.date.desc()).all()
 

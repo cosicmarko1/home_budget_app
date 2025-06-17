@@ -30,8 +30,18 @@ def create_category(headers, name):
     return response.json()
 
 
-def create_expense(headers, amount: float, category_id: int, date: str = None):
-    data = {"amount": amount, "category_id": category_id}
+def create_expense(
+    headers,
+    amount: float,
+    category_id: int,
+    date: str = None,
+    payment_method: str = "cash",
+):
+    data = {
+        "amount": amount,
+        "category_id": category_id,
+        "payment_method": payment_method,
+    }
     if date:
         data["date"] = date
 
