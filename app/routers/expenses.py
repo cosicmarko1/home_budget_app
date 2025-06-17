@@ -4,7 +4,8 @@ from app import models, schemas
 from app.database import get_db
 from app.auth import get_current_user
 from typing import Optional, List
-from datetime import date
+from datetime import date, timedelta
+from sqlalchemy import func
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -62,7 +63,7 @@ def delete_expense(
     db.commit()
 
 
-@router.get("/expenses/filter", response_model=List[schemas.ExpenseResponse])
+@router.get("/filter/", response_model=List[schemas.ExpenseResponse])
 def filter_expenses(
     category_id: Optional[int] = Query(None),
     min_amount: Optional[float] = Query(None),
@@ -89,3 +90,34 @@ def filter_expenses(
         query = query.filter(models.Expense.description.ilike(f"%{description}%"))
 
     return query.order_by(models.Expense.date.desc()).all()
+
+
+@router.get("/summary/", response_model=schemas.ExpenseSummaryResponse)
+def get_expense_summary(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    today = date.today()
+
+    # time ranges and labels
+    periods = {
+        "last_7_days": 7,
+        "last_month": 30,
+        "last_3_months": 90,
+        "last_year": 365,
+    }
+
+    summary = {
+        label: float(
+            db.query(func.sum(models.Expense.amount))
+            .filter(
+                models.Expense.user_id == current_user.id,
+                models.Expense.date >= today - timedelta(days=days),
+            )
+            .scalar()
+            or 0.0
+        )
+        for label, days in periods.items()
+    }
+
+    return summary

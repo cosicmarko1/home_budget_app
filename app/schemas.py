@@ -61,3 +61,10 @@ class ExpenseResponse(ExpenseBase):
 
     class Config:
         from_attributes = True
+
+
+class ExpenseSummaryResponse(BaseModel):
+    last_7_days: float
+    last_month: float
+    last_3_months: float
+    last_year: float
