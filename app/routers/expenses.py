@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
 from app.auth import get_current_user
+from typing import Optional, List
+from datetime import date
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -58,3 +60,32 @@ def delete_expense(
 
     db.delete(expense)
     db.commit()
+
+
+@router.get("/expenses/filter", response_model=List[schemas.ExpenseResponse])
+def filter_expenses(
+    category_id: Optional[int] = Query(None),
+    min_amount: Optional[float] = Query(None),
+    max_amount: Optional[float] = Query(None),
+    start_date: Optional[date] = Query(None),
+    end_date: Optional[date] = Query(None),
+    description: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    query = db.query(models.Expense).filter(models.Expense.user_id == current_user.id)
+
+    if category_id is not None:
+        query = query.filter(models.Expense.category_id == category_id)
+    if min_amount is not None:
+        query = query.filter(models.Expense.amount >= min_amount)
+    if max_amount is not None:
+        query = query.filter(models.Expense.amount <= max_amount)
+    if start_date is not None:
+        query = query.filter(models.Expense.date >= start_date)
+    if end_date is not None:
+        query = query.filter(models.Expense.date <= end_date)
+    if description is not None:
+        query = query.filter(models.Expense.description.ilike(f"%{description}%"))
+
+    return query.order_by(models.Expense.date.desc()).all()
