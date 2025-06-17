@@ -23,3 +23,25 @@ def get_auth_header(username=None, password="defaultpass"):
     login_response = login_user(username, password)
     token = login_response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+def create_category(headers, name):
+    response = client.post("/categories/", json={"name": name}, headers=headers)
+    return response.json()
+
+
+def create_expense(headers, amount: float, category_id: int, date: str = None):
+    data = {"amount": amount, "category_id": category_id}
+    if date:
+        data["date"] = date
+
+    response = client.post("/expenses/", headers=headers, json=data)
+
+    if response.status_code != 200:
+        print("Failed to create expense.")
+        print("Request data:", data)
+        print("Response status code:", response.status_code)
+        print("Response JSON:", response.json())
+
+    assert response.status_code == 200, response.json()
+    return response.json()
