@@ -4,6 +4,7 @@ from app import schemas, models, auth
 from app.database import SessionLocal
 from fastapi.security import OAuth2PasswordRequestForm
 from app.auth import get_current_user
+from utils.defaults import create_default_categories
 
 router = APIRouter()
 
@@ -31,6 +32,8 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    create_default_categories(db, new_user.id)
 
     token = auth.create_access_token(data={"sub": user.username})
     return {"access_token": token, "token_type": "bearer"}
