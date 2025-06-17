@@ -76,3 +76,9 @@ alembic upgrade head
 ```bash
 uvicorn app.main:app --reload
 ```
+
+
+8. Open /docs to test the API
+```bash
+http://127.0.0.1:8000/docs
+```
