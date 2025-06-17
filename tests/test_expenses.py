@@ -1,6 +1,6 @@
 from app.main import app
 from fastapi.testclient import TestClient
-from tests.helpers import get_auth_header
+from tests.helpers import get_auth_header, create_category, create_expense
 
 client = TestClient(app)
 
@@ -63,3 +63,17 @@ def test_delete_expense():
 
     response = client.get("/expenses/", headers=headers)
     assert all(exp["id"] != expense_id for exp in response.json())
+
+
+def test_create_expenses_with_different_payment_methods():
+    headers = get_auth_header()
+    category = create_category(headers, "Payment Test")
+
+    e1 = create_expense(headers, 50.0, category["id"], payment_method="cash")
+    assert e1["payment_method"] == "cash"
+
+    e2 = create_expense(headers, 75.0, category["id"], payment_method="card")
+    assert e2["payment_method"] == "card"
+
+    e3 = create_expense(headers, 120.0, category["id"], payment_method="bank transfer")
+    assert e3["payment_method"] == "bank transfer"

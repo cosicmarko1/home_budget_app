@@ -46,6 +46,7 @@ class ExpenseBase(BaseModel):
     amount: float
     description: Optional[str] = None
     category_id: int
+    payment_method: Optional[str] = None
 
 
 class ExpenseCreate(ExpenseBase):
@@ -58,6 +59,7 @@ class ExpenseResponse(ExpenseBase):
     description: Optional[str]
     date: Optional[date]
     category_id: int
+    payment_method: Optional[str] = None
 
     class Config:
         from_attributes = True
